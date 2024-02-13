@@ -1,0 +1,132 @@
+---
+title: "Exercises for class 1"
+output: html_document
+date: "13-02-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rethinking)
+```
+
+# Exercises for Class 1
+
+## Supporting code
+
+Below is code from Chapter 2 of the book that you can use to do the exercises. Not all the code you require is here though. Make sure to not rush it and take time to play around with each function. :))
+
+```{r}
+# Grid Approximation
+
+# define grid
+p_grid = seq(from = 0, to = 1, length.out=20)
+
+# define prior
+prior = rep(1, 20)
+
+# compute likelihood at each value in grid
+likelihood = dbinom(6, size = 9, prob = p_grid)
+
+# compute product of likelihood and prior
+unstd.posterior = likelihood * prior
+
+# standardize the posterior so it sums to 1
+posterior = unstd.posterior / sum(unstd.posterior)
+
+# plot the distribution
+plot(p_grid, posterior, type = "b",
+     xlab = "probability of water", ylab = "posterior_probability")
+mtext("20 points")
+
+```
+
+## Exercises
+
+### Easy
+
+2E1. 
+
+```{r}
+
+# Your answer here.
+
+```
+
+2E2.
+
+```{r}
+
+# Your answer here.
+
+```
+
+2E3.
+
+```{r}
+
+# Your answer here.
+
+```
+
+2E4.
+
+```{r}
+
+# Discuss in pairs/groups. Ask me for a hint if you feel like it.
+
+```
+
+### Medium
+
+2M1.
+
+```{r}
+
+# Write your code here.
+
+```
+
+2M2.
+
+```{r}
+
+# In the book, McElreath says that we can do much better than choosing a uniform prior for estimating the coverage of water. Is this what we are doing here? How does that impact our estimation?
+
+```
+
+2M3.
+
+```{r}
+
+# Use the Bayes formula!
+
+```
+
+For the exercises below, I highly suggest you to grab a piece of paper and try to solve the problems in a 'visual' way.
+
+2M4.
+
+```{r}
+
+# Write your probability here.
+
+```
+
+2M5.
+
+```{r}
+
+# Write your probability here.
+
+```
+
+2M6.
+
+```{r}
+
+# Write your probability here.
+
+```
