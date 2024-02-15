@@ -1,0 +1,226 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Solutions to exercises for Class 1
+
+## Supporting code
+
+Below is code from Chapter 2 of the book that you can use to do the exercises. Not all the code you require is here though. Make sure to not rush it and take time to play around with each function. :))
+
+```{r}
+# Grid Approximation
+
+# define grid
+p_grid = seq(from = 0, to = 1, length.out=20)
+
+# define prior
+prior = rep(1, 20)
+
+# compute likelihood at each value in grid
+likelihood = dbinom(6, size = 9, prob = p_grid)
+
+# compute product of likelihood and prior
+unstd.posterior = likelihood * prior
+
+# standardize the posterior so it sums to 1
+posterior = unstd.posterior / sum(unstd.posterior)
+
+# plot the distribution
+plot(p_grid, posterior, type = "b",
+     xlab = "probability of water", ylab = "posterior_probability")
+mtext("20 points")
+
+```
+
+## Exercises
+
+### Medium
+
+#### 2M1.
+
+```{r}
+
+# define grid
+p_grid = seq(from = 0, to = 1, length.out=20)
+
+# define prior
+prior = rep(1, 20)
+
+# compute likelihood at each value in grid
+likelihood = dbinom(5, size = 7, prob = p_grid)
+# change to dbinom(3, size = 3
+# change to dbinom(3, size = 4
+# change to dbinom(5, size = 7
+
+# compute product of likelihood and prior
+unstd.posterior = likelihood * prior
+
+# standardize the posterior so it sums to 1
+posterior = unstd.posterior / sum(unstd.posterior)
+
+# plot the distribution
+plot(p_grid, posterior, type = "b",
+     xlab = "probability of water", ylab = "posterior_probability")
+mtext("20 points")
+
+```
+
+#### 2M2.
+
+```{r}
+
+# define grid
+p_grid = seq(from = 0, to = 1, length.out=20)
+
+# step prior, which codes our assumption that all probabilities before 0.5 are impossible
+prior = ifelse(p_grid < 0.5, 0 , 1)
+
+# compute likelihood at each value in grid
+likelihood = dbinom(5, size = 7, prob = p_grid)
+# change to dbinom(3, size = 3
+# change to dbinom(3, size = 4
+# change to dbinom(5, size = 7
+
+# compute product of likelihood and prior
+unstd.posterior = likelihood * prior
+
+# standardize the posterior so it sums to 1
+posterior = unstd.posterior / sum(unstd.posterior)
+
+# plot the distribution
+plot(p_grid, posterior, type = "b",
+     xlab = "probability of water", ylab = "posterior_probability")
+mtext("20 points")
+
+```
+
+#### 2M3.
+
+```{r}
+
+# Pr(Earth|Land) = Pr(Land|Earth) * Pr(Earth) / Pr(Land)
+
+answer = 0.3 * 0.5 / ((1 + 0.3) / 2)
+
+answer
+
+```
+
+#### 2M4.
+
+Using the table similar to one on page 25.
+
+*B* - black, *W* - white
+
+| Cards | Ways to produce observation *B* |
+|-------|---------------------------------|
+| BB    | 2                               |
+| BW    | 1                               |
+| WW    | 0                               |
+
+Total ways to produce observation *B*: 3
+
+Since BB card can produce *B* in two different ways (via each side) out of total possible ways, the probability that the called pulled out was indeed BB is **2/3** or **0.66**.
+
+#### 2M5.
+
+Here we just add another BB card.
+
+*B* - black, *W* - white
+
+| Cards | Ways to produce observation *B* |
+|-------|---------------------------------|
+| BB    | 2                               |
+| BB    | 2                               |
+| BW    | 1                               |
+| WW    | 0                               |
+
+Total ways to produce observation *B*: 5
+
+Now that we have two BB cards, we simply sum the number ways the can produce observation *B* and divide it by the total number of possible observations of *B*. So **4/5** or **0.8**.
+
+#### 2M6.
+
+Here we add another column to our table - our prior.
+
+*B* - black, *W* - white
+
+| Cards | Ways to produce observation *B* | Prior | Updated count |
+|-------|---------------------------------|-------|---------------|
+| BB    | 2                               | 1     | 2             |
+| BW    | 1                               | 2     | 2             |
+| WW    | 0                               | 3     | 0             |
+
+Total ways to produce observation *B*: 4
+
+So both BW and BB cards are **equally likely** to produce observation *B*.
+
+#### 2M7.
+
+This task is best solved by drawing up the 'garden of forking paths' from the beginning of the chapter. Essentially, we count how many ways **each starting card** could have produced observation *W* on the second draw. 
+
+Let's start with BB.
+
+```{r, warning=FALSE}
+
+library(dagitty)
+
+# Create a dagitty object
+garden <- dagitty("dag {
+  BB -> B1
+  BB -> B2
+  B1 -> BW
+  B1 -> WW
+  B2 -> BW
+  B2 -> WW
+}")
+
+# Plot it
+plot(garden)
+
+```
+ 
+As we can see above, if our first card was BB, there are 6 ways the second draw could have been *W* - 3 for one side of BB (B1) and 3 for the other side of BB (B2).
+ 
+Now let's assume the first card drawn was BW and count the ways for the second draw to be *W*.
+
+```{r, warning=FALSE}
+
+# Create our garden
+garden <- dagitty("dag {
+  BW -> B
+  B -> WW
+}")
+
+# Plot it
+plot(garden)
+
+```
+
+If the first card was BW, then the only way to get *W* on the second draw is by pulling the WW card out - either of it's side.
+
+Now we table our findings.
+
+| Cards | Ways to produce observation *W* on second draw |
+|-------|------------------------------------------------|
+| BB    | 6                                              |
+| BW    | 2                                              |
+| WW    | 0                                              |
+
+Total ways to produce observation *W* on second draw: 8
+
+Therefore, to get the probability that the first card drawn was BB is **6/8** or **0.75**.
+
+
+
+
+
+
+
+
