@@ -14,16 +14,28 @@ knitr::opts_chunk$set(echo = TRUE)
 Below is code from Chapter 2 of the book that you can use to do the exercises. Not all the code you require is here though. Make sure to not rush it and take time to play around with each function. :))
 
 ```{r}
+
+prior = rep(1, 20)
+
+# plot the distribution
+plot(p_grid, prior, type = "b",
+     xlab = "probability of water", ylab = "posterior_probability")
+mtext("20 points")
+
+```
+
+
+```{r}
 # Grid Approximation
 
 # define grid
 p_grid = seq(from = 0, to = 1, length.out=20)
 
 # define prior
-prior = rep(1, 20)
+#prior = posterior
 
 # compute likelihood at each value in grid
-likelihood = dbinom(6, size = 9, prob = p_grid)
+likelihood = dbinom(3, size = 4, prob = p_grid)
 
 # compute product of likelihood and prior
 unstd.posterior = likelihood * prior
