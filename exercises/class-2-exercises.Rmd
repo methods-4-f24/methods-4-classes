@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(100)
 ```
 
-# Exercises for Class 1
+# Exercises for Class 2
 
 What's good my young Bayesians? Welcome to the exercises notebook for your 2nd class of Methods 4. As you might have noticed, a lot of Chapter 3 deals with summarizing the posterior. Summarizing the posterior is helpful, but as both Chris and Richard have re-iterated multiple times, you should **always report the full posterior distribution**.
 
