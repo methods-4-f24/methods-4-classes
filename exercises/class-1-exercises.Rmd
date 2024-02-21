@@ -8,10 +8,6 @@ date: "13-02-24"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
-library(rethinking)
-```
-
 # Exercises for Class 1
 
 ## Supporting code
