@@ -9,6 +9,11 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(100)
 ```
 
+```{r}
+library(rethinking)
+```
+
+
 # Exercises for Class 2
 
 What's good my young Bayesians? Welcome to the exercises notebook for your 2nd class of Methods 4. As you might have noticed, a lot of Chapter 3 deals with summarizing the posterior. Summarizing the posterior is helpful, but as both Chris and Richard have re-iterated multiple times, you should **always report the full posterior distribution**.
@@ -108,7 +113,7 @@ PI(samples, prob = 0.66)
 
 ### Sampling to simulate prediction
 
-Section **3.3** of this Chapter is, imo, the most important one. Simulating predictions is something you'll be frequently doing going forward, so it's worth taking time to unpack the mechanics of it.
+Section **3.3** of this Chapter is, imo, the most important one. Simulating predictions is something you'll frequently doing going forward, so it's worth taking time to unpack the mechanics of it.
 
 ```{r}
 # First, play around with this function. What does it do? What does the output mean?
