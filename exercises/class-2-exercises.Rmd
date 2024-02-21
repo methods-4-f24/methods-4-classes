@@ -108,7 +108,7 @@ PI(samples, prob = 0.66)
 
 ### Sampling to simulate prediction
 
-Section **3.3** of this Chapter is, imo, the most important one. Simulating predictions is something you'll frequently doing going forward, so it's worth taking time to unpack the mechanics of it.
+Section **3.3** of this Chapter is, imo, the most important one. Simulating predictions is something you'll be frequently doing going forward, so it's worth taking time to unpack the mechanics of it.
 
 ```{r}
 # First, play around with this function. What does it do? What does the output mean?
