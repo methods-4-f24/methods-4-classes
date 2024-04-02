@@ -29,9 +29,9 @@ Throughout this course, there has been a hard emphasis on clarifying and formali
 
 #### 5M0.
 
-Conceptual question. Let's say you have bought a farm in Vestjylland. The previous owner was a very detail oriented and meticulous farmer and has logged all of the relevant data, such as soil moisture and air temperature for the period of 3 years.
+Conceptual question. Let's say you have bought a farm in Vestjylland. The previous owner was a **very** detail oriented and meticulous farmer and has logged all of the relevant data, such as soil moisture and air temperature for the period of 3 years.
 
-You are far from a good farmer. You only know how to code. In the morning, the televised weather forecast forecasts substantial heat wave for the next 3 days. You don't know what to do, should I water my soil more, given this new information? You don't trust your common sence, so you throw in all of the data (soil moisture and air temperature) into your machine learning model. The model predicts that soil moisture for the forecasted values of air temperature will be normal. So you decide not to give the soil extra water. Was that a good decision? Why?
+You are far from a good farmer. You only know how to code. In the morning, the televised weather forecast forecasts substantial heat wave for the next 3 days. You don't know what to do, should you water your crops extra, given this new information? You don't trust your common sense, so you throw in all of the data (soil moisture and air temperature) into your machine learning model. The model predicts that soil moisture for the forecasted values of air temperature will be normal. So you decide not to give the soil extra water. Was that a good decision? Why?
 
 #### 5M1.
 
