@@ -13,9 +13,9 @@ library(rethinking)
 library(daggity)
 ```
 
-Welcome back to your favorite course of all time. This week we start getting into causal inference - arguably the most important part of all of your Methods courses. Why? Because we finally start practicing *thinking as scientists*, not just as statisticians.
+Welcome back to your favorite course of all time. This week we start getting into causal inference - arguably the most important part of all of your Methods courses. Why? Because we finally start practicing *doing science*, not just statistics.
 
-The exercises for this week are slightly modified versions of exercises from Chapter 5, modified to ease you into our next portfolio which we will start on next week.
+The exercises for this week are versions of exercises from Chapter 5, modified to ease you into our next portfolio which we will start on next week.
 
 ## Exercises
 
