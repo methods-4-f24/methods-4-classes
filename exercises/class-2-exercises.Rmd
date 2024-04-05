@@ -118,6 +118,7 @@ Section **3.3** of this Chapter is, imo, the most important one. Simulating pred
 ```{r}
 # First, play around with this function. What does it do? What does the output mean?
 rbinom(1, size = 9, prob = 0.7)
+#this draws one sample with a probabilty of 70% to draw the value, and it does it 9 times and count how many of these are drawn.
 
 # Now let's scale it up.
 dummy_w = rbinom(1e4, size = 9, prob = 0.1)
@@ -125,6 +126,7 @@ simplehist(dummy_w)
 
 # What happens if we increase the size?
 # What about probability?
+#it draws 10000 times, nine balls with 10% probabilty.
 ```
 
 Now let's do a posterior predictive check. Take a minute to contemplate what are we doing here. How does the resulting distribution compare to our sampled posterior?
@@ -134,6 +136,8 @@ w = rbinom(1e4, size = 9, prob = samples)
 simplehist(w)
 
 # Compare to sampled posterior here - choose one of the summarization methods above! Is it more or less conservative?
+
+HPDI(w, prob = 0.66)
 ```
 
 The resulting distribution is for predictions, but it incorporates all of the uncertainty embodied in the posterior distribution for the parameter p. As a result, it is honest. While the model does a good job of predicting the data - the most likely observation is indeed the observed data - predictions are still quite spread out.
@@ -163,6 +167,8 @@ dens(samples)
 
 # Your code here.
 
+HPDI(samples, prob = 0.9)
+
 ```
 
 #### 3M3.
@@ -172,6 +178,16 @@ Construct a posterior predictive check for this model and data. This means simul
 ```{r}
 
 # Your code here.
+
+posterior_predictions = rbinom(1e4, size = 15, prob = samples)
+
+simplehist(posterior_predictions)
+
+length(posterior_predictions[posterior_predictions== 8])/10000
+
+#posterior = dbinom(8, size = 15, prob = samples)
+
+#dens(posterior)
 
 ```
 
@@ -183,6 +199,12 @@ Using the posterior distribution constructed from the new (8/15) data, now calcu
 
 # Your code here.
 
+posterior_predictions = rbinom(1e4, size = 9, prob = samples)
+
+simplehist(posterior_predictions)
+
+length(posterior_predictions[posterior_predictions== 6])/10000
+
 ```
 
 #### 3M5.
@@ -192,6 +214,20 @@ Start over at 3M1, but now use a prior that is zero below p=0.5 and a constant a
 ```{r}
 
 # Your code here.
+p_grid1 = seq(from = 0, to = 1, length.out=1000)
+prior1 = c(rep(0, 500),rep(1, 500))
+likelihood1 = dbinom(8, size = 15, prob = p_grid1)
+posterior1 = likelihood1 * prior1
+posterior1 = posterior1 / sum(posterior1)
+samples1 = sample(p_grid1, prob = posterior1, size = 1e4, replace = TRUE)
+
+dens(samples1)
+
+
+sum(posterior1*abs(0.7 - p_grid1)) #abs is the absolute error.
+sum(posterior*abs(0.7 - p_grid)
+    
+#or i could have taken the 0.6-0.8 interval
 
 ```
 
@@ -227,6 +263,27 @@ Using grid approximation, compute the posterior distribution for the probability
 ```{r}
 
 # Your code here.
+
+p_grid = seq(from = 0, to = 1, length.out=1000)
+prior = rep(1, 1000)
+
+
+
+boys = length(birth1[birth1== 1])
+boys
+
+likelihood = dbinom(51, size = 100, prob = p_grid)
+
+posterior = likelihood * prior
+posterior = posterior / sum(posterior)
+
+
+# plot the distribution
+plot(p_grid, posterior, type = "b",
+     xlab = "probability of water", ylab = "posterior_probability")
+mtext("20 points")
+
+
 
 ```
 
