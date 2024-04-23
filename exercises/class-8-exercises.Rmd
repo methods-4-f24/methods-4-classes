@@ -1,0 +1,55 @@
+---
+title: "Class 8 Exercises"
+output: html_document
+date: "2024-04-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rethinking)
+```
+
+## Exercises
+
+### Easy
+
+Do all the easy exercises from Chapter 9: **9E1** through **9E6**.
+
+### Medium
+
+#### 9M1
+
+```{r}
+
+# Your solution here
+
+```
+
+#### 9M2
+
+```{r}
+
+# Your solution herre
+
+```
+
+### Hard
+
+#### 9H1
+
+```{r}
+
+# Your solution here
+
+```
+
+#### 9H2
+
+```{r}
+
+# Your solution herre
+
+```
