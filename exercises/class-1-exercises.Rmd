@@ -134,22 +134,24 @@ mtext("20 points")
 
 # Write your code here.
 p_grid = seq(from = 0, to = 1, length.out=20)
+print(p_grid)
 
 # over the 20 sequences between 0 and 100% prob we set prior to 100% after the first ten in order to show that there was at least 50% water in
 # the other planets where this was tested.
 prior = c(0:9*0, rep(1, 10))
+print(prior)
 
 # x is the number of "successes" and size is the number of times the globe is thrown
 likelihood1 = dbinom(3, size = 3, prob = p_grid)
 likelihood2 = dbinom(3, size = 4, prob = p_grid)
 likelihood3 = dbinom(5, size = 7, prob = p_grid)
 #so this is the probability of hitting this amount of water (W) given the different probabilities of hitting water (0-100%) which is the likelihood.
-# but we want the reverse, eg. the probability of hitting water the the globe given the samples we got.
+# but we want the reverse, eg. the probability of hitting water on the globe given the samples we got. (the different probabilities for the globe containing each percentage of water from 5% increments)
 
 
-#print(likelihood1)
-#print(likelihood2)
-#print(likelihood3)
+print(likelihood1)
+print(likelihood2)
+print(likelihood3)
 
 # compute product of likelihood and prior
 unstd.posterior1 = likelihood1 * prior
