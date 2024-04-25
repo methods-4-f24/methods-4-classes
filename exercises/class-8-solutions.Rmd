@@ -1,0 +1,237 @@
+---
+title: "Class 8 Solutions"
+output: html_document
+date: "2024-04-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rethinking)
+```
+
+## Exercises
+
+### Easy
+
+#### 9E1
+
+Only (3) is required.
+
+#### 9E2
+
+Gibbs sampling requires that we use special priors that are *conjugate* with the likelihood. This means that holding all the other parameters constant, it is possible to derive analytical solutions for the posterior distribution of each parameter. These conditional distributions are used to make smart proposals for jumps in the Markov chain. Gibbs sampling is limited both by the necessity to use conjugate priors, as well as its tendency to get stuck in small regions of the posterior when the posterior distribution has either highly correlated parameters or high dimension.
+
+#### 9E3
+
+Hamiltonian Monte Carlo cannot handle discrete parameters. This is because it requires a smooth surface to glide its imaginary particle over while sampling from the posterior distribution.
+
+#### 9E4
+
+The effect number of samples n_eff is an estimate of the number of completely independent samples that would hold equivalent information about the posterior distribution. It is always smaller than the actual number of samples, because samples from a Markov chain tend to sequentially correlated or *autocorrelated*. As autocorrelation rises, `n_eff` gets smaller. At the limit of perfect autocorrelation, for example, all samples would have the same value and `n_eff` would be equal to 1, no matter the actual number of samples drawn.
+
+#### 9E5
+
+`Rhat` should approach 1. How close should it get? People disagree, but it is common to judge that any value less than 1.1 indicates convergence. But like all heuristic indicators, `Rhat` can be fooled.
+
+
+#### 9E6
+
+A healthy Markov chain should be both *stationary* and *well-mixing*. The first is necessary for inference. The second is desirable because it means the chain is more efficient. A chain that is both of these things should resemble horizontal noise.
+
+A chain that is malfunctioning, as the problem asks, would not be stationary. This means it is not converging to the target distribution, the posterior distribution. Examples were provided in the chapter. A virtue of Hamiltonian Monte Carlo is that it makes such chains very obvious: they tend to be rather flat wandering trends. Sometimes they are perfectly flat.
+
+The best test of convergence is always to compare multiple chains. So the best sketch of a malfunctioning trace plot would be one that shows multiple chains wandering into different regions of the parameter space. Figure 8.7 in the chapter, left side, provides an example.
+
+### Medium
+
+#### 9M1
+
+First, we load and preprocess the data.
+
+```{r}
+data(rugged)
+d <- rugged
+d$log_gdp <- log(d$rgdppc_2000)
+dd <- d[ complete.cases(d$rgdppc_2000) , ]
+dd$log_gdp_std <- dd$log_gdp / mean(dd$log_gdp)
+dd$rugged_std <- dd$rugged / max(dd$rugged)
+dd$cid <- ifelse( dd$cont_africa==1 , 1 , 2 )
+dat_slim <- list(
+    log_gdp_std = dd$log_gdp_std,
+    rugged_std = dd$rugged_std,
+    cid = as.integer( dd$cid ) )
+```
+
+Then we take Model 9.1 and place a uniform prior on $\sigma$.
+
+```{r}
+# new model with uniform prior on sigma
+m9.1_unif <- ulam(
+    alist(
+        log_gdp_std ~ dnorm( mu , sigma ) ,
+        mu <- a[cid] + b[cid]*( rugged_std - 0.215 ) ,
+        a[cid] ~ dnorm( 1 , 0.1 ) ,
+        b[cid] ~ dnorm( 0 , 0.3 ) ,
+        sigma ~ dunif( 0 , 1 )
+    ) , data=dat_slim , chains=4 , cores=4 )
+
+
+```
+
+We then also make a version with an exponential prior on $\sigma$.
+
+```{r}
+m9.1_exp <- ulam(
+    alist(
+        log_gdp_std ~ dnorm( mu , sigma ) ,
+        mu <- a[cid] + b[cid]*( rugged_std - 0.215 ) ,
+        a[cid] ~ dnorm( 1 , 0.1 ) ,
+        b[cid] ~ dnorm( 0 , 0.3 ) ,
+        sigma ~ dexp( 1 )
+    ) , data=dat_slim , chains=4 , cores=4 )
+```
+
+Before looking at the posterior distributions for each model, it helps to visualize each prior.
+
+```{r}
+curve( dexp(x,1) , from=0 , to=7 ,
+    xlab="sigma" , ylab="Density" , ylim=c(0,1) )
+curve( dunif(x,0,1) , add=TRUE , col="red" )
+mtext( "priors" )
+```
+
+Now let’s compare the posterior distributions of $\sigma$ for both models.
+
+```{r}
+post <- extract.samples( m9.1_exp )
+dens( post$sigma , xlab="sigma" )
+post <- extract.samples( m9.1_unif )
+dens( post$sigma , add=TRUE , col="red" )
+mtext( "posterior" )
+```
+
+The posterior distributions are almost identical. Why? Because there is a lot of data to inform $\sigma$. Can you find a prior that won’t wash out?
+
+
+#### 9M2
+
+Model code using using same data as in the previous problem:
+
+```{r}
+m9M2 <- ulam(
+    alist(
+        log_gdp_std ~ dnorm( mu , sigma ) ,
+        mu <- a[cid] + b[cid]*( rugged_std - 0.215 ) ,
+        a[cid] ~ dnorm( 1 , 0.1 ) ,
+        b[cid] ~ dexp( 0.3 ) ,
+        sigma ~ dexp( 1 )
+    ) , data=dat_slim , chains=4 , cores=4 )
+precis( m9M2 , 2 )
+```
+
+The big difference here is `b[2]`. In the original model, the mass of this parameter is almost entirely below zero. Now it cannot go below zero, because the prior is not defined below zero. So instead the mass presses up against zero tightly.
+
+### Hard
+
+#### 9H1
+
+The code provided in the PDF version of the book doesn't work out of the box. Here is modified code that works:
+
+```{r}
+mp <- ulam(
+    alist(
+        a ~ dnorm(0,1),
+        b ~ dcauchy(0,1)
+    ),
+    data=list(y=1),
+    iter=1e4, warmup=100)
+```
+
+What this code does is sample from the priors.There is no likelihood, and that’s okay. The posterior distribution is then just a merger of the priors. What is tricky about this problem though is that the Cauchy prior for the parameter `b` will not produce the kind of trace plot you might expect from a good Markov chain. This is because Cauchy is a very long tailed distribution, so it’ll occasionally make distance leaps out into the tail. We’ll look at the precis output, then the trace plot, so you can see what we mean.
+
+
+
+```{r}
+precis(mp)
+```
+
+```{r}
+traceplot( mp, n_col=2 , lwd=2 )
+```
+
+The trace plot might look a little weird to you, because the trace for `b` has some big spikes in it. That’s how a Cauchy behaves, though. It has thick tails, so needs to occasionally sample way out. The trace plot for `a` is typical Gaussian in shape. Since the posterior distribution does often tend towards Gaussian for many parameters, it’s possible to get too used to expecting every trace to look like the one on the left. But you have to think about the influence of priors in this case. The trace on the right is just fine.
+
+#### 9H2
+
+First,load and prepare the data.
+
+```{r}
+data(WaffleDivorce)
+d <- WaffleDivorce
+d$D <- standardize( d$Divorce )
+d$M <- standardize( d$Marriage )
+d$A <- standardize( d$MedianAgeMarriage )
+d_trim <- list(D=d$D,M=d$M,A=d$A)
+```
+
+Now to fit the models over again, this time using `ulam`. Note that we need to add `log_lik=TRUE` to get the terms needed to compute PSIS or WAIC.
+
+```{r}
+m5.1_stan <- ulam(
+    alist(
+        D ~ dnorm( mu , sigma ) ,
+        mu <- a + bA * A ,
+        a ~ dnorm( 0 , 0.2 ) ,
+        bA ~ dnorm( 0 , 0.5 ) ,
+        sigma ~ dexp( 1 )
+    ) , data=d_trim , chains=4 , cores=4 , log_lik=TRUE )
+```
+
+
+```{r}
+m5.2_stan <- ulam(
+alist(
+    D ~ dnorm( mu , sigma ) ,
+        mu <- a + bM * M ,
+        a ~ dnorm( 0 , 0.2 ) ,
+        bM ~ dnorm( 0 , 0.5 ) ,
+        sigma ~ dexp( 1 )
+    ) , data=d_trim , chains=4 , cores=4 , log_lik=TRUE )
+```
+
+
+```{r}
+m5.3_stan <- ulam(
+    alist(
+        D ~ dnorm( mu , sigma ) ,
+        mu <- a + bM*M + bA*A ,
+        a ~ dnorm( 0 , 0.2 ) ,
+        bM ~ dnorm( 0 , 0.5 ) ,
+        bA ~ dnorm( 0 , 0.5 ) ,
+        sigma ~ dexp( 1 )
+    ) , data=d_trim , chains=4 , cores=4 , log_lik=TRUE )
+```
+
+Now to compare the models:
+
+```{r}
+compare( m5.1_stan , m5.2_stan , m5.3_stan , func=PSIS )
+```
+
+```{r}
+compare( m5.1_stan , m5.2_stan , m5.3_stan , func=WAIC )
+```
+
+The model with only age-at-marriage comes out on top, although the model with both predictors does nearly as well. In fact, the PSIS/WAIC of both models is nearly identical. I’d call this is a tie, because even though one model does a bit better than the other, the difference between them is of no consequence. How can we explain this? Well, look at the marginal posterior for `m5.3_stan`:
+
+```{r}
+precis(m5.3_stan)
+```
+
+While this model includes marriage rate as a predictor, it estimates very little expected influence for it, as well as substantial uncertainty about the direction of any influence it might have. So models `m5.3_stan` and `m5.1_stan` make practically the same predictions. After accounting for the larger penalty for `m5.3_stan` — 4.7 instead of 3.7 — the two models rank almost the same. This makes sense, because you already learned back in Chapter 5 that marriage rate probably gets its correlation with divorce rate through a correlation with age at marriage. So even though including marriage rate in a model doesn’t really aid in prediction, there is enough evidence here that the parameter bR can be estimated well enough, and including marriage rate doesn’t hurt prediction either.
+
+Or at least that’s what PSIS/WAIC expects. Only the future will tell which model is actually better for forecasting. PSIS/WAIC is not an oracle. It’s a golem.
+
